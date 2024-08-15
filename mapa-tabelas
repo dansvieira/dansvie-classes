@@ -2,12 +2,12 @@ class Mapa_Tabelas:
     
     def __init__(self, 
                  data_sample,
-                 data_details, 
+                 table_details, 
                  schema='bronze',
                  viz_perc_unicos = 3):
         
         self.__data_sample = data_sample
-        self.__data_details = data_details
+        self.__table_details = table_details
         self.__schema = schema
         self.__viz_perc_unicos = viz_perc_unicos
         self.__is_fitted = False
@@ -78,10 +78,18 @@ class Mapa_Tabelas:
         
         
     def __mapa_details(self, 
-                      __data_details): 
+                      __table_details): 
         
         mp = self.__mapa_variaveis(self.__data_sample)
-        self.data_total = pd.merge(__data_details, mp, how='left', on='column_name')
+        data_total = pd.merge(__table_details, mp, how='left', on='column_name')
+        
+        
+        data_total['nullable_old'] = data_total.nullable
+        data_total['nullable'] = np.where(data_total['Nulos %']>0.5, 1, 0) 
+        data_total['check'] = data_total['nullable'] == data_total['nullable_old']
+        
+        
+        self.data_total = data_total
         
         return self.data_total
     
@@ -104,7 +112,7 @@ class Mapa_Tabelas:
     def fit(self):
         
         self.__is_fitted = True
-        self.__mapa_details(self.__data_details)
+        self.__mapa_details(self.__table_details)
         self.data_document = self.data_total[['column_name', 'data_type_name', 'nullable', 'column_default', 'Amostra']]              
         
         return self.data_total
