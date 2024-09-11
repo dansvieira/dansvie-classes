@@ -1,4 +1,16 @@
 class Mapa_Tabelas:
+
+    """
+    Parameters
+    ----------
+    data_sample:  
+        Resultado da query com os exemplos de dados.
+    table_details: 
+        Resultado da query com dados sobre as colunas como: 'data_type_name', 'nullable', 'column_default', 'repeatable' 
+        que estão setadas no banco de dados.
+                
+    """    
+    
     
     def __init__(self, 
                  data_sample,
@@ -13,7 +25,8 @@ class Mapa_Tabelas:
         self.__is_fitted = False
 
 
-    def __mapa_variaveis(self, data_sample):
+    def __mapa_variaveis(self, 
+                         data_sample):
 
         if self.__is_fitted:
             features = data_sample.columns.to_list()    
@@ -41,7 +54,8 @@ class Mapa_Tabelas:
                 dict_var['Qtde'].append(data_sample[feature].count())
                 dict_var['Nulos %'].append(round(data_sample[feature].isnull().sum() / data_sample.shape[0], 4)*100)
                 __values = df[feature].value_counts().index
-
+                
+                
                 if (data_sample[feature].dtype == "O") \
                     or (data_sample[feature].dtype == 'M8[ns]') \
                     or (data_sample[feature].dtype == 'datetime64[ns]'):        
@@ -58,8 +72,13 @@ class Mapa_Tabelas:
 
                     else:
                         dict_var['Amostra'].append(__values[:4].astype(str).str.cat(sep=', '))
-                        dict_var['Min'].append(__values[-1])
-                        dict_var['Max'].append(__values[0])     
+                        try:
+                            dict_var['Min'].append(__values[-1])
+                            dict_var['Max'].append(__values[0])                                
+                        except: 
+                            dict_var['Min'].append(" ")
+                            dict_var['Max'].append(" ")                        
+ 
 
                 else:      
                     dict_var['Avg'].append(data_sample[feature].mean())
@@ -73,6 +92,7 @@ class Mapa_Tabelas:
             self.__data_var = pd.DataFrame.from_dict(data = dict_var)
             
         return self.__data_var
+    
         
         
     def __mapa_details(self, 
