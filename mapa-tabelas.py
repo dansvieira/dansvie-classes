@@ -54,19 +54,6 @@ class Mapa_Tabelas:
                 dict_var['Qtde'].append(data_sample[feature].count())
                 dict_var['Nulos %'].append(round(data_sample[feature].isnull().sum() / data_sample.shape[0], 4)*100)
                 __values = df[feature].value_counts().index
-
-                # print(feature)
-                # print('___')
-                # print('data_sample[feature].dtype')
-                # print(data_sample[feature].dtype)
-                # print('___')
-                # print('df[feature].value_counts().head(): ')
-                # print(df[feature].value_counts().head())
-                # print('___')
-                # print('__values')
-                # print(__values)
-                # print('___')
-                # print('___')
                 
                 
                 if (data_sample[feature].dtype == "O") \
