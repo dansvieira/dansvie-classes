@@ -7,10 +7,8 @@ class Mapa_Tabelas:
         Resultado da query com os exemplos de dados.
     table_details: 
         Resultado da query com dados sobre as colunas como: 'data_type_name', 'nullable', 'column_default', 'repeatable' 
-        que estão setadas no banco de dados.
-                
+        que estão setadas no banco de dados.      
     """    
-    
     
     def __init__(self, 
                  data_sample,
@@ -55,7 +53,6 @@ class Mapa_Tabelas:
                 dict_var['Nulos %'].append(round(data_sample[feature].isnull().sum() / data_sample.shape[0], 4)*100)
                 __values = df[feature].value_counts().index
                 
-                
                 if (data_sample[feature].dtype == "O") \
                     or (data_sample[feature].dtype == 'M8[ns]') \
                     or (data_sample[feature].dtype == 'datetime64[ns]'):        
@@ -76,10 +73,9 @@ class Mapa_Tabelas:
                             dict_var['Min'].append(__values[-1])
                             dict_var['Max'].append(__values[0])                                
                         except: 
-                            dict_var['Min'].append(" ")
-                            dict_var['Max'].append(" ")                        
+                            dict_var['Min'].append("-")
+                            dict_var['Max'].append("-")                        
  
-
                 else:      
                     dict_var['Avg'].append(data_sample[feature].mean())
                     dict_var['Min'].append(data_sample[feature].min())
@@ -94,14 +90,11 @@ class Mapa_Tabelas:
         return self.__data_var
     
         
-        
     def __mapa_details(self, 
                       table_details): 
         
         mp = self.__mapa_variaveis(self.data_sample)
         data_total = pd.merge(table_details, mp, how='left', on='column_name')
-        
-        
         data_total['nullable_old'] = data_total.nullable
         data_total['nullable'] = np.where(data_total['Nulos %']>0.5, 1, 0) 
         data_total['repeatable'] = np.where(data_total['Unicos %']<99.9, 1, 0) 
@@ -138,5 +131,4 @@ class Mapa_Tabelas:
         data_document['source'] = '-'
         self.data_document = data_document[['column name','source', 'data type', 'desc type', 'nullable', 'repeatable', 'default value','description', 'sample']]                                              
               
-        
         return self.data_total
